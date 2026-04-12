@@ -1,0 +1,53 @@
+<div class="page">
+  <a routerLink="/devices" class="back">← Back to list</a>
+
+  <h1>{{ isEdit ? 'Edit device' : 'Create device' }}</h1>
+  <p class="muted">All fields are required. Duplicates are blocked by name + manufacturer.</p>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="panel">
+    <label>
+      Name
+      <input type="text" formControlName="name" />
+    </label>
+    <label>
+      Manufacturer
+      <input type="text" formControlName="manufacturer" />
+    </label>
+    <label>
+      Type
+      <select formControlName="type">
+        <option [ngValue]="DeviceType.Phone">Phone</option>
+        <option [ngValue]="DeviceType.Tablet">Tablet</option>
+      </select>
+    </label>
+    <label>
+      OS
+      <input type="text" formControlName="os" />
+    </label>
+    <label>
+      OS version
+      <input type="text" formControlName="osVersion" />
+    </label>
+    <label>
+      Processor
+      <input type="text" formControlName="processor" />
+    </label>
+    <label>
+      RAM
+      <input type="text" formControlName="ramAmount" />
+    </label>
+    <label class="full">
+      Description
+      <textarea rows="4" formControlName="description"></textarea>
+    </label>
+
+    @if (errorMessage) {
+      <p class="error">{{ errorMessage }}</p>
+    }
+
+    <div class="actions">
+      <button type="submit" class="btn primary" [disabled]="loading">Save</button>
+      <a routerLink="/devices" class="btn">Cancel</a>
+    </div>
+  </form>
+</div>

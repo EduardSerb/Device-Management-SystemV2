@@ -1,0 +1,51 @@
+<div class="page">
+  <a routerLink="/devices" class="back">← Back to list</a>
+
+  @if (loading) {
+    <p>Loading…</p>
+  } @else if (error) {
+    <p class="error">{{ error }}</p>
+  } @else if (device) {
+    <header class="head">
+      <div>
+        <h1>{{ device.name }}</h1>
+        <p class="muted">{{ device.manufacturer }} · {{ device.type === DeviceType.Phone ? 'Phone' : 'Tablet' }}</p>
+      </div>
+      <div class="actions">
+        <a class="btn" [routerLink]="['/devices', device.id, 'edit']">Edit</a>
+        <button type="button" class="btn primary" (click)="generate()">Generate description (AI)</button>
+      </div>
+    </header>
+
+    @if (aiMessage) {
+      <p class="banner">{{ aiMessage }}</p>
+    }
+
+    <section class="grid">
+      <div>
+        <h2>Assignment</h2>
+        @if (device.assignedTo) {
+          <p>
+            <strong>{{ device.assignedTo.name }}</strong> — {{ device.assignedTo.role }} ({{ device.assignedTo.location }})
+          </p>
+        } @else {
+          <p class="muted">Unassigned</p>
+        }
+      </div>
+
+      <div>
+        <h2>Specifications</h2>
+        <dl>
+          <div><dt>OS</dt><dd>{{ device.os }} {{ device.osVersion }}</dd></div>
+          <div><dt>Processor</dt><dd>{{ device.processor }}</dd></div>
+          <div><dt>RAM</dt><dd>{{ device.ramAmount }}</dd></div>
+        </dl>
+      </div>
+
+      <div class="full">
+        <h2>Description</h2>
+        <p>{{ device.description }}</p>
+      </div>
+    </section>
+  }
+</div>

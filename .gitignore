@@ -1,0 +1,23 @@
+## .NET
+bin/
+obj/
+out/
+*.user
+*.suo
+*.cache
+*.log
+.vs/
+*.DotSettings.user
+
+## User secrets / local env (keep appsettings templates; do not commit real secrets)
+**/appsettings.*.local.json
+
+## Node / Angular
+node_modules/
+dist/
+.angular/
+
+## OS / IDE
+Thumbs.db
+Desktop.ini
+.idea/

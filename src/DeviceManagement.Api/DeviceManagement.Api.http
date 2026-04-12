@@ -1,0 +1,31 @@
+@baseUrl = http://localhost:5117
+@token = REPLACE_WITH_JWT
+
+### Register
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "demo@company.test",
+  "password": "Passw0rd!",
+  "fullName": "Demo User",
+  "roleName": "Engineer",
+  "location": "Remote"
+}
+
+### Login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "alice@company.test",
+  "password": "Passw0rd!"
+}
+
+### List devices (auth required)
+GET {{baseUrl}}/api/devices
+Authorization: Bearer {{token}}
+
+### Search
+GET {{baseUrl}}/api/devices/search?q=apple%2012gb
+Authorization: Bearer {{token}}

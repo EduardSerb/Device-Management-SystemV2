@@ -1,0 +1,58 @@
+<div class="page">
+  <header class="toolbar">
+    <div>
+      <h1>Devices</h1>
+      <p class="muted">Inventory with current assignee</p>
+    </div>
+    <a class="btn primary" routerLink="/devices/new">New device</a>
+  </header>
+
+  <section class="panel">
+    <div class="search">
+      <input [(ngModel)]="searchQuery" placeholder="Search name, manufacturer, RAM, processor…" />
+      <button type="button" class="btn primary" (click)="runSearch()" [disabled]="loading">Search</button>
+      <button type="button" class="btn ghost" (click)="searchQuery = ''; reload()" [disabled]="loading">Reset</button>
+    </div>
+
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Manufacturer</th>
+            <th>Type</th>
+            <th>OS</th>
+            <th>Assigned to</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of items; track item.id) {
+            <tr>
+              <td>
+                <a [routerLink]="['/devices', item.id]">{{ item.name }}</a>
+              </td>
+              <td>{{ item.manufacturer }}</td>
+              <td>{{ item.type === DeviceType.Phone ? 'Phone' : 'Tablet' }}</td>
+              <td>{{ item.os }}</td>
+              <td>{{ assignedLabel(item) }}</td>
+              <td class="actions">
+                @if (canAssign(item)) {
+                  <button type="button" class="btn small" (click)="assign(item)">Assign to me</button>
+                }
+                @if (canUnassign(item)) {
+                  <button type="button" class="btn small ghost" (click)="unassign(item)">Unassign</button>
+                }
+                <button type="button" class="btn small danger" (click)="deleteRow(item)">Delete</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

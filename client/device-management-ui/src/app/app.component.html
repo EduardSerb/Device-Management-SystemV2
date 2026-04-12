@@ -1,0 +1,16 @@
+<header class="topbar">
+  <div class="brand">{{ title }}</div>
+  <nav class="nav">
+    @if (auth.isLoggedIn()) {
+      <a routerLink="/devices">Devices</a>
+      <button type="button" class="linkish" (click)="auth.logout()">Logout</button>
+    } @else {
+      <a routerLink="/login">Login</a>
+      <a routerLink="/register">Register</a>
+    }
+  </nav>
+</header>
+
+<main class="shell">
+  <router-outlet />
+</main>
