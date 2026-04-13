@@ -1,32 +1,21 @@
 # Device Management System
 
-Company device inventory with assignments, JWT authentication, ranked search, and an optional OpenAI-powered description generator. Backend: **ASP.NET Core 9** Web API, **EF Core**, **SQL Server**. Frontend: **Angular 19**.
+Small full-stack app: **ASP.NET Core** Web API + **SQL Server** + **Angular** (devices, users, JWT auth, search, optional AI descriptions).
 
-## Prerequisites
+---
 
-- [.NET SDK 9](https://dotnet.microsoft.com/download) (or 8+)
-- [Node.js LTS](https://nodejs.org/) (includes npm)
-- **SQL Server** — [LocalDB](https://learn.microsoft.com/sql/database-engine/configure-windows/sql-server-express-localdb), SQL Express, or Docker SQL Server
+## What you need installed
+
+- [.NET SDK](https://dotnet.microsoft.com/download) 8 or 9  
+- [Node.js LTS](https://nodejs.org/) (includes npm)  
+- **SQL Server** [LocalDB](https://learn.microsoft.com/sql/database-engine/configure-windows/sql-server-express-localdb) or Express (default connection string targets LocalDB)  
 - [Git](https://git-scm.com/)
-- (Optional, Phase 4) OpenAI API key or compatible endpoint
 
-## Clone and layout
+---
 
-```powershell
-git clone <your-repo-url>
-cd DeviceManagement
-```
+## Open and run (local)
 
-Important paths:
-
-- `src/DeviceManagement.sln` — Visual Studio / `dotnet` solution
-- `src/DeviceManagement.Api` — Web API
-- `client/device-management-ui` — Angular SPA
-- `database/` — idempotent SQL helpers + generated EF script
-
-## Database
-
-**Recommended (matches the running app):** from the repo root:
+**1. Database** — in a terminal, go to the `src` folder inside this repo:
 
 ```powershell
 cd src
@@ -34,81 +23,80 @@ dotnet tool restore
 dotnet tool run dotnet-ef database update --project DeviceManagement.Api
 ```
 
-You can also install the EF CLI globally: `dotnet tool install --global dotnet-ef` and then run `dotnet ef database update --project DeviceManagement.Api` from `src`.
-
-**Alternative scripts:**
-
-1. Run `database/01-create.sql` to create the `DeviceManagement` database (idempotent).
-2. Apply schema using `database/ef-migration-baseline.sql` in SSMS or `sqlcmd` (creates Identity + `Devices` + history table), **or** use `dotnet ef database update` as above (preferred).
-3. Optionally run `database/02-seed.sql` to idempotently insert sample **devices** (assignments are seeded when the API runs).
-
-Connection string (default LocalDB) is in `src/DeviceManagement.Api/appsettings.json` under `ConnectionStrings:DefaultConnection`. Override with environment variable `ConnectionStrings__DefaultConnection` for other hosts.
-
-## Run the API
+**2. API** — same repo, new terminal (or stop after step 1 and use one terminal):
 
 ```powershell
-cd src/DeviceManagement.Api
+cd src\DeviceManagement.Api
 dotnet run
 ```
 
-- HTTP (used by the default Angular `environment.ts`): `http://localhost:5117`
-- HTTPS: `https://localhost:7188` (trust dev certs: `dotnet dev-certs https --trust`)
+Wait until you see a URL like `http://localhost:5117`. Open **Swagger**: [http://localhost:5117/swagger](http://localhost:5117/swagger).
 
-Swagger UI (Development): `http://localhost:5117/swagger` (or the HTTPS URL printed in the console).
-
-### JWT signing key (production)
-
-Replace `Jwt:SigningKey` in configuration with a long random secret (32+ characters). For local dev the sample value in `appsettings.json` is only for convenience.
-
-### OpenAI / LLM (Phase 4)
-
-Configure the API key via [user secrets](https://learn.microsoft.com/aspnet/core/security/app-secrets) (development):
+**3. Web UI** — another terminal:
 
 ```powershell
-cd src/DeviceManagement.Api
-dotnet user-secrets set "OpenAI:ApiKey" "YOUR_KEY_HERE"
-```
-
-Optional overrides: `OpenAI:BaseUrl` (OpenAI-compatible API), `OpenAI:Model`, `OpenAI:Temperature`.
-
-The endpoint `POST /api/devices/{id}/generate-description` updates the stored `Description` after a successful response.
-
-## Run the Angular app
-
-```powershell
-cd client/device-management-ui
+cd client\device-management-ui
 npm install
 npm start
 ```
 
-Open `http://localhost:4200`. The dev build points to `http://localhost:5117/api` (`src/environments/environment.ts`). Adjust `apiUrl` for HTTPS or production deployments; production builds replace `environment.ts` with `environment.prod.ts` (see `angular.json` `fileReplacements`).
+Open [http://localhost:4200](http://localhost:4200). Log in with a seeded user (**`alice@company.test`** / **`Passw0rd!`**) or use **Register**.
 
-## Demo accounts (after API seed runs)
+**Tip:** The Angular app calls **`http://localhost:5117/api`**. If your API uses another port, edit `client/device-management-ui/src/environments/environment.ts` (`apiUrl`).
 
-Seeded users (password `Passw0rd!`):
+---
 
-- `alice@company.test`
-- `bob@company.test`
+## Check that it works
 
-You can also **Register** a new account from the UI (email + password + profile fields).
+1. **`dotnet test`** from the `src` folder — should report passing tests.  
+2. **Swagger** — `GET /api/devices` should return **401** without a token; after login, call with **Authorize** (JWT) and you should get **200**.  
+3. **Browser** — login → device list loads → open a device → create/edit/delete if you want.  
+4. **(Optional)** AI description: set an API key — `dotnet user-secrets set "OpenAI:ApiKey" "YOUR_KEY" --project src/DeviceManagement.Api` — then use “Generate description” in the UI.
 
-## Tests
+---
+
+## Put the project on GitHub
+
+**1.** Create an empty repository on [GitHub](https://github.com/new) (no README if you already have one locally). Copy the repo URL, e.g. `https://github.com/YOUR_USERNAME/device-management.git`.
+
+**2.** On your PC, open PowerShell in the **folder that contains** `README.md`, `src`, and `client` (this project root).
+
+**3.** If Git is not initialized yet:
 
 ```powershell
-cd src
-dotnet test
+git init
+git branch -M main
+git add .
+git commit -m "Initial commit: device management system"
 ```
 
-Integration tests use an in-memory database and the `IntegrationTest` host environment (see `DatabaseSeeder.IntegrationTestEnvironment`).
+**4.** Connect GitHub and push:
 
-## Features checklist (assignment)
+```powershell
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+git push -u origin main
+```
 
-- CRUD devices, list shows assignee, duplicate guard on **name + manufacturer**
-- JWT login/register; devices require authentication
-- Assign / unassign rules enforced server-side
-- Ranked search: `GET /api/devices/search?q=...` (deterministic scoring, no AI)
-- AI description generation with persistence
+(Use SSH instead if you prefer: `git@github.com:YOUR_USERNAME/YOUR_REPO.git`.)
 
-## Video demo
+**5.** On GitHub, refresh the repo page — you should see your files. Add the repo URL to your README or course submission.
 
-Record a short English voiceover walkthrough (CRUD, auth, assign/unassign, search, AI, optional DB scripts) and upload it to your preferred host; link it from your GitHub repository description or README.
+**Before pushing:** do **not** commit real secrets. Use **User Secrets** or GitHub **Secrets** for keys; keep `appsettings.json` without production passwords/API keys.
+
+---
+
+## Repo layout
+
+| Path | Purpose |
+|------|--------|
+| `src/DeviceManagement.sln` | Open in Visual Studio or build with `dotnet build` |
+| `src/DeviceManagement.Api` | Web API |
+| `client/device-management-ui` | Angular app |
+| `database/` | Optional SQL scripts (`01-create.sql`, `02-seed.sql`, migration baseline) |
+
+---
+
+## More detail
+
+- Connection string: `src/DeviceManagement.Api/appsettings.json` → `ConnectionStrings:DefaultConnection`  
+- Seeded logins: `alice@company.test` / `bob@company.test`, password **`Passw0rd!`**
