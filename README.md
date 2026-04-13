@@ -55,36 +55,6 @@ Open [http://localhost:4200](http://localhost:4200). Log in with a seeded user (
 
 ---
 
-## Put the project on GitHub
-
-**1.** Create an empty repository on [GitHub](https://github.com/new) (no README if you already have one locally). Copy the repo URL, e.g. `https://github.com/YOUR_USERNAME/device-management.git`.
-
-**2.** On your PC, open PowerShell in the **folder that contains** `README.md`, `src`, and `client` (this project root).
-
-**3.** If Git is not initialized yet:
-
-```powershell
-git init
-git branch -M main
-git add .
-git commit -m "Initial commit: device management system"
-```
-
-**4.** Connect GitHub and push:
-
-```powershell
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
-git push -u origin main
-```
-
-(Use SSH instead if you prefer: `git@github.com:YOUR_USERNAME/YOUR_REPO.git`.)
-
-**5.** On GitHub, refresh the repo page — you should see your files. Add the repo URL to your README or course submission.
-
-**Before pushing:** do **not** commit real secrets. Use **User Secrets** or GitHub **Secrets** for keys; keep `appsettings.json` without production passwords/API keys.
-
----
-
 ## Repo layout
 
 | Path | Purpose |
